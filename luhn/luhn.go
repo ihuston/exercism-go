@@ -1,24 +1,22 @@
 // Package luhn provides calculation of the Luhn checksum.
 package luhn
 
-import "strings"
 import "unicode"
 
 // Valid checks whether a string contains a number valid per the Luhn algorithm.
 func Valid(input string) bool {
-	cleaned := strings.Replace(input, " ", "", -1)
-	if len(cleaned) < 2 {
-		return false
-	}
-
 	sum := 0
-	for n := len(cleaned) - 1; n >= 0; n-- {
-		char := rune(cleaned[n])
+	digitIndex := 0
+	for n := len(input) - 1; n >= 0; n-- {
+		char := rune(input[n])
+		if char == ' ' {
+			continue
+		}
 		if !unicode.IsDigit(char) {
 			return false
 		}
 		value := int(char - '0')
-		if (len(cleaned)-n-1)%2 == 0 {
+		if (digitIndex)%2 == 0 {
 			sum += value
 		} else {
 			value2 := value * 2
@@ -28,6 +26,10 @@ func Valid(input string) bool {
 				sum += value2
 			}
 		}
+		digitIndex++
+	}
+	if digitIndex <= 1 {
+		return false
 	}
 	return sum%10 == 0
 }
