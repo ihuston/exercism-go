@@ -8,7 +8,7 @@ func ConcurrentFrequency(texts []string) FreqMap {
 		go frequencyHandler(t, c)
 	}
 
-	return accumulate(len(texts), c)
+	return accumulate(texts, c)
 }
 
 // frequencyHandler pushes a Frequency result to a channel.
@@ -17,9 +17,9 @@ func frequencyHandler(text string, c chan FreqMap) {
 }
 
 // accumulate combines multiple FreqMaps from a channel.
-func accumulate(l int, c chan FreqMap) FreqMap {
+func accumulate(texts []string, c chan FreqMap) FreqMap {
 	results := FreqMap{}
-	for i := 0; i < l; i++ {
+	for range texts {
 		m := <-c
 		for k, v := range m {
 			results[k] += v
